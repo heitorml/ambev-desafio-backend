@@ -2,7 +2,7 @@
 
 namespace Ambev.DeveloperEvaluation.Domain.Specifications
 {
-    public class DiscountSpecification : ISpecification<Product>
+    public class DiscountSpecification : ISpecification<CartProducts>
     {
         private readonly int _min;
         private readonly int _max;
@@ -13,7 +13,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Specifications
             _max = max; // Para o caso de não ter limite, podemos passar int.MaxValue
         }
 
-        public bool IsSatisfiedBy(Product entity)
+        public bool IsSatisfiedBy(CartProducts entity)
         {
             return entity.Quantity >= _min && entity.Quantity <= _max;
         }
@@ -22,7 +22,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Specifications
     public class DiscountRule
     {
         public string Name { get; set; } = string.Empty;
-        public ISpecification<Product> Specification { get; set; } = null!;
+        public ISpecification<CartProducts> Specification { get; set; } = null!;
         public decimal DiscountPercentage { get; set; }
     }
 

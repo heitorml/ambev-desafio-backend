@@ -1,0 +1,10 @@
+ALTER TABLE "CartProducts" DROP COLUMN "Id";
+ALTER TABLE "CartProducts" DROP COLUMN "Quantity";
+ALTER TABLE "CartProducts" DROP COLUMN "UnitPrice";
+ALTER TABLE "CartProducts" DROP COLUMN "TotalPrice";
+ALTER TABLE "CartProducts" DROP COLUMN "Discount";
+ALTER TABLE "CartProducts" DROP COLUMN "ProductName";
+ALTER TABLE "CartProducts" DROP COLUMN "CreatedAt";
+ALTER TABLE "CartProducts" RENAME COLUMN "CartId" TO "CartsId";
+ALTER TABLE "CartProducts" RENAME COLUMN "ProductId" TO "ProductsId";
+ALTER TABLE "CartProducts" ADD PRIMARY KEY ("ProductsId", "CartsId");

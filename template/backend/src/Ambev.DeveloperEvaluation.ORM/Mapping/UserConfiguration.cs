@@ -1,7 +1,7 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.ORM.Mapping.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Text.RegularExpressions;
 
 namespace Ambev.DeveloperEvaluation.ORM.Mapping;
 
@@ -27,5 +27,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasConversion<string>()
             .HasMaxLength(20);
 
+        UserSeed.Seed(builder);
     }
 }

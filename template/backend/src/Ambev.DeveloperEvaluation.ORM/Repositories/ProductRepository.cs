@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +29,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             _context.Products.Remove(product);
             await _context.SaveChangesAsync(cancellationToken);
             return true;
+        }
+
+        public async Task UpdateAsync(Product product, CancellationToken cancellationToken = default)
+        {
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public IQueryable<Product?> GetAllAsync(CancellationToken cancellationToken = default)

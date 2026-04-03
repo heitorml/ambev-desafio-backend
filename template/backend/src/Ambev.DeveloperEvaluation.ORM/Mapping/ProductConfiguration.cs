@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.ORM.Mapping.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,16 +14,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Id).HasColumnType("uuid").HasDefaultValueSql("gen_random_uuid()");
 
-            builder.Property(u => u.Quantity).IsRequired();
             builder.Property(u => u.UnitPrice).IsRequired();
             builder.Property(u => u.CreatedAt).IsRequired();
-            builder.Property(u => u.Discount);
             builder.Property(u => u.ProductName).IsRequired();
 
-            builder.HasMany(p => p.Sales)
-                .WithMany(s => s.Products)
-                .UsingEntity(j => j.ToTable("SaleProducts"));
 
+            ProductSeed.Seed(builder);
         }
     }
 }

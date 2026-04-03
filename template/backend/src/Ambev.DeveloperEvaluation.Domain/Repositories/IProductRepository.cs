@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories
 {
@@ -27,6 +27,13 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>True if the product was deleted, false if not found</returns>
         Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Updates a product in the repository
+        /// </summary>
+        /// <param name="product">The product to update</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        Task UpdateAsync(Product product, CancellationToken cancellationToken = default);
 
 
         IQueryable<Product?> GetAllAsync(CancellationToken cancellationToken = default);

@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Services
 {
     public interface IDiscountService
     {
-        void ApplyDiscounts(List<Product> items);
+        void ApplyDiscounts(List<CartProducts> items);
     }
 
     public class DiscountService
@@ -15,7 +15,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Services
         {
             _rules = rules;
         }
-        public void ApplyDiscounts(List<Product> items)
+        public void ApplyDiscounts(List<CartProducts> items)
         {
             foreach (var item in items)
             {
