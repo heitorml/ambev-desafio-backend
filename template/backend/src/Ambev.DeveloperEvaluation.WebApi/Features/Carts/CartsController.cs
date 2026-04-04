@@ -13,9 +13,12 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class CartsController : BaseController
 {
@@ -33,6 +36,7 @@ public class CartsController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateCart([FromBody] CreateCartRequest request, CancellationToken cancellationToken)
     {
+        request.UserId = GetCurrentUserId();
 
         var validator = new CreateCartRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -74,7 +78,8 @@ public class CartsController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateCart([FromRoute] Guid id, [FromBody] UpdateCartRequest request, CancellationToken cancellationToken)
     {
-       
+        request.UserId = GetCurrentUserId();
+
         var validator = new UpdateCartRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 

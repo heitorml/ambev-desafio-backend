@@ -13,9 +13,12 @@ using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.ListProducts;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ProductsController : BaseController
 {
