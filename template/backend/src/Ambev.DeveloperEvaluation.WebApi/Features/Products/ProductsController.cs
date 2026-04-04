@@ -44,12 +44,7 @@ public class ProductsController : BaseController
         var command = _mapper.Map<CreateProductCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Created(string.Empty, new ApiResponseWithData<CreateProductResponse>
-        {
-            Success = true,
-            Message = "Product created successfully",
-            Data = _mapper.Map<CreateProductResponse>(response)
-        });
+        return Created(string.Empty, response);
     }
 
     [HttpGet("{id}")]
@@ -67,12 +62,7 @@ public class ProductsController : BaseController
         var command = _mapper.Map<GetProductCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetProductResponse>
-        {
-            Success = true,
-            Message = "Product retrieved successfully",
-            Data = _mapper.Map<GetProductResponse>(response)
-        });
+        return Ok(_mapper.Map<GetProductResponse>(response));
     }
 
     [HttpPut("{id}")]
@@ -90,12 +80,7 @@ public class ProductsController : BaseController
         var command = _mapper.Map<UpdateProductCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<UpdateProductResponse>
-        {
-            Success = true,
-            Message = "Product updated successfully",
-            Data = _mapper.Map<UpdateProductResponse>(response)
-        });
+        return Ok(_mapper.Map<UpdateProductResponse>(response));
     }
 
     [HttpDelete("{id}")]
@@ -135,16 +120,6 @@ public class ProductsController : BaseController
         var command = _mapper.Map<ListProductsCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<Common.PaginatedList<ListProductsResponse>>
-        {
-            Success = true,
-            Message = "Products retrieved successfully",
-            Data = new Common.PaginatedList<ListProductsResponse>(
-                _mapper.Map<List<ListProductsResponse>>(response.Items),
-                response.TotalCount,
-                response.CurrentPage,
-                response.PageSize
-            )
-        });
+        return Ok(response);
     }
 }

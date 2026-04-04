@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Services;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using AutoMapper;
 using FluentValidation;
+using MassTransit;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
@@ -12,15 +13,23 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
         private readonly IMapper _mapper;
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IBus _bus;
 
-        public UpdateCartHandler(IMapper mapper, ICartRepository cartRepository, IProductRepository productRepository)
+        public UpdateCartHandler(
+            IMapper mapper,
+            ICartRepository cartRepository, 
+            IProductRepository productRepository, 
+            IBus bus)
         {
             _mapper = mapper;
             _cartRepository = cartRepository;
             _productRepository = productRepository;
+            _bus = bus;
         }
 
-        public async Task<UpdateCartResult> Handle(UpdateCartCommand request, CancellationToken cancellationToken)
+        public async Task<UpdateCartResult> Handle(
+            UpdateCartCommand request, 
+            CancellationToken cancellationToken)
         {
 
             var cart = await _cartRepository.GetByIdAsync(request.Id, cancellationToken);

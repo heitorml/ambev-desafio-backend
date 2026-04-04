@@ -48,3 +48,9 @@ services:
        MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
     ports:
        - "6379"
+
+  ambev.developerevaluation.rabbitmq:
+    image: masstransit/rabbitmq:latest
+    ports:
+     - "5672:5672"
+     - "15672:15672"

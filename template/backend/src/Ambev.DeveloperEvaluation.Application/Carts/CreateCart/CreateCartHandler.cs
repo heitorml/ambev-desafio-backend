@@ -5,6 +5,7 @@ using Ambev.DeveloperEvaluation.Domain.Services;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using AutoMapper;
 using FluentValidation;
+using MassTransit;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart
@@ -14,15 +15,18 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         public CreateCartHandler(
-            ICartRepository cartRepository, 
+            ICartRepository cartRepository,
             IMapper mapper,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IBus bus)
         {
             _cartRepository = cartRepository;
             _mapper = mapper;
             _productRepository = productRepository;
+            _bus = bus;
         }
 
         public async Task<CreateCartResult> Handle(CreateCartCommand command, CancellationToken cancellationToken)

@@ -12,9 +12,5 @@ public class GetProductResult
 
     public int Quantity { get; set; }
 
-    public decimal TotalPrice { get; set; }
-
-    public decimal? Discount { get; set; }
-
     public DateTime CreatedAt { get; set; }
 }

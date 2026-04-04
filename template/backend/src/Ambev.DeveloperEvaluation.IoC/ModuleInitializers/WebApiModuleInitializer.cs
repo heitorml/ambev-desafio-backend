@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Security;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,18 @@ namespace Ambev.DeveloperEvaluation.IoC.ModuleInitializers
 
             builder.Services.AddControllers();
             builder.Services.AddHealthChecks();
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("localhost", "/", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+                });
+            });
         }
     }
 }

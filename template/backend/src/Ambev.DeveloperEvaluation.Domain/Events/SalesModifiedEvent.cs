@@ -2,11 +2,11 @@
 
 namespace Ambev.DeveloperEvaluation.Domain.Events
 {
-    public class cartsModifiedEvent
+    public class SaleModifiedEvent
     {
         public Cart cart { get; }
 
-        public cartsModifiedEvent(Cart cart)
+        public SaleModifiedEvent(Cart cart)
         {
             cart = cart;
         }

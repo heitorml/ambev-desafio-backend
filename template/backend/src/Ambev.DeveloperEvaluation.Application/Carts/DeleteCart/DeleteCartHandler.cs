@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
+using MassTransit;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.DeleteCart
@@ -7,10 +8,12 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.DeleteCart
     public class DeleteCartHandler : IRequestHandler<DeleteCartCommand, DeleteCartResult>
     {
         private readonly ICartRepository _cartRepository;
+        private readonly IBus _bus;
 
-        public DeleteCartHandler(ICartRepository cartRepository)
+        public DeleteCartHandler(ICartRepository cartRepository, IBus bus)
         {
             _cartRepository = cartRepository;
+            _bus = bus;
         }
 
         public async Task<DeleteCartResult> Handle(DeleteCartCommand request, CancellationToken cancellationToken)

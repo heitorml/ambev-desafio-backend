@@ -3,6 +3,7 @@ using MediatR;
 using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using MassTransit;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 
@@ -10,11 +11,13 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Update
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
+    private readonly IBus _bus;
 
-    public UpdateProductHandler(IProductRepository productRepository, IMapper mapper)
+    public UpdateProductHandler(IProductRepository productRepository, IMapper mapper, IBus bus)
     {
         _productRepository = productRepository;
         _mapper = mapper;
+        _bus = bus;
     }
 
     public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
