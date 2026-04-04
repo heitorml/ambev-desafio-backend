@@ -2,6 +2,8 @@
 
 public enum CartStatus
 {
+
     Cancelled = 0,
+    Active = 1,
     NotCancelled
 }

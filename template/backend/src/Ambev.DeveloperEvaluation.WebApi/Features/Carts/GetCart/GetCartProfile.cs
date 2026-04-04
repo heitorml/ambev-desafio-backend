@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
+using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
+using Ambev.DeveloperEvaluation.Application.Carts.ListCart;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart
@@ -9,6 +10,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart
         {
             CreateMap<GetCartRequest, GetCartCommand>();
             CreateMap<GetCartResult, GetCartResponse>();
+            CreateMap<CartProductResult, CartProductResponse>();
         }
     }
 }

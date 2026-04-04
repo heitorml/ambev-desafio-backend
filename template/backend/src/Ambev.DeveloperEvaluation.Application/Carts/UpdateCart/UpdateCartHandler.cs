@@ -11,24 +11,21 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
     {
         private readonly IMapper _mapper;
         private readonly ICartRepository _cartRepository;
+        private readonly IProductRepository _productRepository;
 
-        public UpdateCartHandler(IMapper mapper, ICartRepository cartRepository)
+        public UpdateCartHandler(IMapper mapper, ICartRepository cartRepository, IProductRepository productRepository)
         {
             _mapper = mapper;
             _cartRepository = cartRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<UpdateCartResult> Handle(UpdateCartCommand request, CancellationToken cancellationToken)
         {
 
-            var cart = await _cartRepository.GetByIdAsync(request.cartsId, cancellationToken);
+            var cart = await _cartRepository.GetByIdAsync(request.Id, cancellationToken);
             if (cart == null)
-                return new UpdateCartResult
-                {
-                    cartId = request.cartsId,
-                    Success = false
-                };
-
+                return new UpdateCartResult{ Id = request.Id, Success = false};
 
             var validator = new UpdateCartValidador();
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -36,17 +33,21 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-
-            _mapper.Map(request, cart);
+            var productIds = request.Products.Select(p => p.Id).ToList();
+            var products = await _productRepository.GetByIdsAsync(productIds, cancellationToken);
+            
+            _mapper.Map(request, cart, opt => opt.Items["Products"] = products);
 
             var rulesDiscount = RulesDiscountConfiguration.GetRules();
             var discountService = new DiscountService(rulesDiscount);
 
             discountService.ApplyDiscounts(cart.Products.ToList());
-            cart.TotalCartAmount = cart.Products.Sum(p => p.TotalPrice);
+            cart.Calculate();
 
             await _cartRepository.UpdateAsync(cart, cancellationToken);
             var result = _mapper.Map<UpdateCartResult>(cart);
+            result.Success = true;
+
             return result;
         }
     }

@@ -48,5 +48,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             return await _context.Products
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
+
+        public async Task<List<Product>> GetByIdsAsync(List<Guid> ids, CancellationToken cancellationToken = default)
+        {
+            return await _context.Products
+                .Where(p => ids.Contains(p.Id))
+                .ToListAsync(cancellationToken);
+        }
     }
 }

@@ -25,4 +25,10 @@ public class Cart : BaseEntity
     {
         CreatedAt = DateTime.UtcNow;
     }
+
+    public void Calculate() 
+    {
+        TotalCartAmount  = Products.Sum(o => o.TotalPrice);
+        Quantity = Products.Sum(o => o.Quantity);
+    }
 }

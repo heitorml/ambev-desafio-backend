@@ -65,12 +65,7 @@ public class CartsController : BaseController
         var command = _mapper.Map<GetCartCommand>(request.Id);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetCartResponse>
-        {
-            Success = true,
-            Message = "Cart retrieved successfully",
-            Data = _mapper.Map<GetCartResponse>(response)
-        });
+        return response != null ?  Ok(response) : NotFound();
     }
 
     [HttpPut("{id}")]
@@ -79,21 +74,20 @@ public class CartsController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateCart([FromRoute] Guid id, [FromBody] UpdateCartRequest request, CancellationToken cancellationToken)
     {
-        request.Id = id;
+       
         var validator = new UpdateCartRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if(id != request.Id)
+            return BadRequest("Request ID not equals");
+
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
         var command = _mapper.Map<UpdateCartCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<UpdateCartResponse>
-        {
-            Success = true,
-            Message = "Cart updated successfully",
-            Data = _mapper.Map<UpdateCartResponse>(response)
-        });
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]

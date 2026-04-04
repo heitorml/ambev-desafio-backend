@@ -1,5 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
 {
@@ -8,18 +7,18 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
         public UpdateCartValidador()
         {
             RuleFor(cart => cart.Branch).NotEmpty().Length(3, 50);
-            RuleFor(cart => cart.cartsId).NotNull().NotEmpty();
+            RuleFor(cart => cart.Id).NotNull().NotEmpty();
             RuleFor(cart => cart.UserId).NotNull().NotEmpty();
-            
+
             RuleFor(cart => cart.Products)
               .NotEmpty()
               .WithMessage("A lista de produtos não pode ser vazia.")
-              .Custom(ValidateMaxProducts); 
+              .Custom(ValidateMaxProducts);
         }
 
 
         private void ValidateMaxProducts(
-            List<Product> produtos, 
+            List<UpdateCartItemCommand> produtos,
             ValidationContext<UpdateCartCommand> context)
         {
             if (produtos == null || !produtos.Any())
@@ -32,10 +31,10 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
 
             foreach (var invalido in produtosInvalidos)
             {
-                 context.AddFailure(
-                    nameof(Domain.Entities.Cart.Products),
-                    $"O produto com ID {invalido.ProdutoId} excedeu o limite. Encontrados {invalido.Quantidade} registros, mas o limite é 20."
-                );
+                context.AddFailure(
+                   nameof(Products),
+                   $"O produto com ID {invalido.ProdutoId} excedeu o limite. Encontrados {invalido.Quantidade} registros, mas o limite é 20."
+               );
             }
         }
     }

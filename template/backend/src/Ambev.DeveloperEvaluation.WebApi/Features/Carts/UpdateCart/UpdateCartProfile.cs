@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
+using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart
@@ -8,7 +8,9 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart
         public UpdateCartProfile()
         {
             CreateMap<UpdateCartRequest, UpdateCartCommand>();
+            CreateMap<UpdateCartProductRequest, UpdateCartItemCommand>();
             CreateMap<UpdateCartResult, UpdateCartResponse>();
+
         }
     }
 }

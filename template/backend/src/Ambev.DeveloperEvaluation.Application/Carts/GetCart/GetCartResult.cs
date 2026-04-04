@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.GetCart
 {
     public class GetCartResult
     {
-        public Guid cartsId { get; set; }
+        public Guid Id { get; set; }
 
         public decimal TotalCartAmount { get; set; }
 
@@ -19,6 +19,6 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.GetCart
 
         public CartStatus Status { get; set; }
 
-        public List<ProductResult> Products { get; set; } = new List<ProductResult>();
+        public List<CartProductResult> Products { get; set; } = new List<CartProductResult>();
     }
 }

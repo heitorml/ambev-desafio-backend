@@ -1,5 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.WebApi.Features.Products.ListProducts;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.ListCarts
 {
@@ -19,6 +19,6 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.ListCarts
 
         public CartStatus Status { get; set; }
 
-        public List<ListProductsResponse> Products { get; set; } = new List<ListProductsResponse>();
+        public List<CartProductResponse> Products { get; set; } = new List<CartProductResponse>();
     }
 }

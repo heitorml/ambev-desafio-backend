@@ -28,5 +28,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         {
             CreatedAt = DateTime.UtcNow;
         }
+
+        public decimal CalculateTotalPrice() {
+
+            return (Quantity * UnitPrice);
+        }
     }
 }

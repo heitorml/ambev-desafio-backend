@@ -1,18 +1,21 @@
-﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
 {
     public class UpdateCartCommand: IRequest<UpdateCartResult>
     {
-        public Guid cartsId { get; set; }
+        public Guid Id { get; set; }
 
         public Guid UserId { get; set; }
 
         public string Branch { get; set; } = string.Empty;
 
-        public List<Product> Products { get; set; } = new List<Product>();
+        public CartStatus Status { get; set; }
+
+        public List<UpdateCartItemCommand> Products { get; set; } = new List<UpdateCartItemCommand>();
 
 
         public ValidationResultDetail Validate()
@@ -25,5 +28,11 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
                 Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
             };
         }
+    }
+
+    public class UpdateCartItemCommand
+    {
+        public Guid Id { get; set; }
+        public int Quantity { get; set; }
     }
 }

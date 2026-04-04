@@ -10,7 +10,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart
 
         public Guid UserId { get; set; }
 
-        public List<Product> Products { get; set; } = new List<Product>();
+        public List<CreateCartItemCommand> Products { get; set; } = new List<CreateCartItemCommand>();
 
 
         public ValidationResultDetail Validate()
@@ -23,5 +23,13 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart
                 Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
             };
         }
+    }
+
+    public class CreateCartItemCommand
+    {
+        public Guid Id { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public string ProductName { get; set; } = string.Empty;
     }
 }

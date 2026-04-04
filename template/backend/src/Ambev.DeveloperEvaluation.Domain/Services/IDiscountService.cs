@@ -19,17 +19,14 @@ namespace Ambev.DeveloperEvaluation.Domain.Services
         {
             foreach (var item in items)
             {
-                // Busca todas as regras que o item atende
                 var applicableRules = _rules.Where(r => r.Specification.IsSatisfiedBy(item)).ToList();
+                item.TotalPrice = item.CalculateTotalPrice();
+
                 if (applicableRules.Any())
                 {
-                    // Estratégia: Aplicar a regra que dá o MAIOR desconto para o cliente
                     var bestRule = applicableRules.OrderByDescending(r => r.DiscountPercentage).First();
-
-                    item.Discount =  (item.Quantity * item.UnitPrice) * (bestRule.DiscountPercentage / 100m);
-
-                    Console.WriteLine($"[Sistema] Regra '{bestRule.Name}' aplicada no {item.ProductName}. " +
-                                      $"{bestRule.DiscountPercentage}% de desconto concedido.");
+                   
+                    item.Discount = item.TotalPrice * (bestRule.DiscountPercentage / 100m);
                 }
             }
         }

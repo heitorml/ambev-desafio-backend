@@ -18,11 +18,15 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.ListCart
 
         public CartStatus Status { get; set; }
 
-        public List<ProductResult> Products { get; set; } = new List<ProductResult>();
+        public List<CartProductResult> Products { get; set; } = new List<CartProductResult>();
     }
 
-    public class ProductResult
+    public class CartProductResult
     {
+        public Guid Id { get; set; }
+
+        public Guid ProductId { get; set; }
+
         public int Quantity { get; set; }
 
         public decimal UnitPrice { get; set; }
@@ -30,5 +34,6 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.ListCart
         public decimal? Discount { get; set; }
 
         public string ProductName { get; set; } = string.Empty;
+        public decimal TotalPrice { get; set; }
     }
 }

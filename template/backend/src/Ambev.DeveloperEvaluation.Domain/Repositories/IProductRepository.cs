@@ -21,6 +21,14 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Retrieves products by their unique identifiers
+        /// </summary>
+        /// <param name="ids">The unique identifiers of the products</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>A list of products found</returns>
+        Task<List<Product>> GetByIdsAsync(List<Guid> ids, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Deletes a product from the repository
         /// </summary>
         /// <param name="id">The unique identifier of the product to delete</param>

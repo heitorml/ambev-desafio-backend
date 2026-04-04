@@ -2,7 +2,7 @@
 {
     public class UpdateCartResult
     {
-        public Guid cartId { get; set; }
+        public Guid Id { get; set; }
         public bool Success { get; set; }
     }
 }
