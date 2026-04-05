@@ -5,6 +5,8 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Common.Security;
 using MassTransit;
+using Ambev.DeveloperEvaluation.Domain.Events.Users;
+using Ambev.DeveloperEvaluation.Domain.Events.Products;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 
@@ -55,6 +57,21 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreateUserRe
 
         var createdUser = await _userRepository.CreateAsync(user, cancellationToken);
         var result = _mapper.Map<CreateUserResult>(createdUser);
+
+        await SendEvent(user, cancellationToken);
+
         return result;
+    }
+
+    private async Task SendEvent(User user, CancellationToken cancellationToken)
+    {
+        await _bus.Publish(new UserRegisteredEvent
+        {
+           Email = user.Email,
+           Username = user.Username,
+           Phone = user.Phone,
+           UserId = user.Id
+        },
+        cancellationToken);
     }
 }

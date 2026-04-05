@@ -13,6 +13,8 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.ListCart
 
         public int PageNumber { get; set; } = 1;
 
+        public ListCartCommand() { }
+
         public ListCartCommand(Guid id, Guid userId )
         {
             Id = id;

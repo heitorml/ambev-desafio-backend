@@ -13,6 +13,8 @@ namespace Ambev.DeveloperEvaluation.Application.Products.ListProducts
 
         public int PageNumber { get; set; } = 1;
 
+        public ListProductsCommand() { }
+
         public ListProductsCommand(Guid id, string productName)
         {
             Id = id;

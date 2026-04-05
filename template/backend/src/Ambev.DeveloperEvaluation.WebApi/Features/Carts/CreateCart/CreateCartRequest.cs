@@ -4,8 +4,6 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart
     {
         public string Branch { get; set; } = string.Empty;
 
-        public Guid UserId { get; set; }
-
         public List<ProductResquest> Products { get; set; } = new List<ProductResquest>();
     }
 

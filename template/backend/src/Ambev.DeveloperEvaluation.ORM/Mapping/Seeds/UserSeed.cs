@@ -13,7 +13,7 @@ public static class UserSeed
             Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             Username = "admin_user",
             Email = "admin@ambev.com",
-            Password = "$2a$11$N9/Xp5iC4N0b6HmVXZ0k/.sS.c9B/4rK2b3m9O6uJ3AOMZgH2wWLy", // fake hash
+            Password = "$2a$11$S9Ca7p9asLQkCZr/USP/8utANQmMjFBZUXJO/1.yN6jNvz/F1hdty", // fake hash
             Phone = "11999999999",
             Status = UserStatus.Active,
             Role = UserRole.Admin,

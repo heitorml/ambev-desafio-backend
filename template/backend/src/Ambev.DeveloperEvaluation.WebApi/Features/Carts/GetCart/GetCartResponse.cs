@@ -14,9 +14,9 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart
 
         public DateTime CreatedAt { get; set; }
 
-        public Guid UserId { get; set; }
-
         public CartStatus Status { get; set; }
+
+        public UserResponse User { get; set; }
 
         public List<CartProductResponse> Products { get; set; } = new List<CartProductResponse>();
     }
@@ -30,4 +30,15 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart
         public string ProductName { get; set; } = string.Empty;
         public decimal TotalPrice { get; set; }
     }
+
+    public class UserResponse
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public UserRole Role { get; set; }
+        public UserStatus Status { get; set; }
+    }
+
 }

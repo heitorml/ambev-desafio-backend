@@ -10,6 +10,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Microsoft.Extensions.DependencyInjection;
+using Polly;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -100,6 +102,26 @@ public class Program
             app.UseBasicHealthChecks();
 
             app.MapControllers();
+            
+     
+            var retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetry(
+                    5,
+                    retryAttempt => TimeSpan.FromSeconds(5),
+                    (exception, timeSpan, retryCount, context) =>
+                    {
+                        Log.Warning("Attempt {Attempt} to apply migrations failed. Retrying in {Seconds} seconds... Error: {Message}", retryCount, timeSpan.Seconds, exception.Message);
+                    });
+
+            retryPolicy.Execute(() =>
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<DefaultContext>();
+                    dbContext.Database.Migrate();
+                }
+            });
 
             app.Run();
         }

@@ -15,7 +15,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.GetCart
 
         public DateTime CreatedAt { get; set; }
 
-        public Guid UserId { get; set; }
+        public UserResult User { get; set; }
 
         public CartStatus Status { get; set; }
 

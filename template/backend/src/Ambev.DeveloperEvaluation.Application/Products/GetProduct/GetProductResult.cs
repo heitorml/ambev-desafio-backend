@@ -1,5 +1,3 @@
-using System;
-
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProduct;
 
 public class GetProductResult
@@ -9,8 +7,6 @@ public class GetProductResult
     public string ProductName { get; set; } = string.Empty;
 
     public decimal UnitPrice { get; set; }
-
-    public int Quantity { get; set; }
 
     public DateTime CreatedAt { get; set; }
 }

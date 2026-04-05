@@ -10,7 +10,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
         public decimal TotalPrice { get; set; }
 
-        public decimal? Discount { get; set; }
+        public decimal? Discount { get; set; } = 0M;
 
         public string ProductName { get; set; } = string.Empty;
 
@@ -20,9 +20,9 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
         public Guid ProductId { get; set; }
 
-        public Cart Cart { get; set; }
+        public Cart? Cart { get; set; }
 
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
 
         public CartProducts()
         {

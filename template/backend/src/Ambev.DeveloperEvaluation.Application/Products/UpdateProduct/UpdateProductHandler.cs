@@ -4,6 +4,7 @@ using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using MassTransit;
+using Ambev.DeveloperEvaluation.Domain.Events.Products;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 
@@ -37,6 +38,21 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Update
 
         await _productRepository.UpdateAsync(product, cancellationToken);
 
+        await SendEvent(product, cancellationToken);
+
         return _mapper.Map<UpdateProductResult>(product);
+    }
+
+    private async Task SendEvent(Product product, CancellationToken cancellationToken)
+    {
+        await _bus.Publish(new ProductModifiedEvent
+        {
+            CreatedAt = product.CreatedAt,
+            ProductId = product.Id,
+            ProductName = product.ProductName,
+            UnitPrice = product.UnitPrice
+
+        },
+        cancellationToken);
     }
 }

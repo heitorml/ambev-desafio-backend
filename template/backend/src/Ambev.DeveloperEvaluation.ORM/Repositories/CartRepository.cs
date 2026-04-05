@@ -46,18 +46,17 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                     .Include(x => x.Products)
                     .Include(x => x.User)
                     .AsNoTracking()
-                    .AsSplitQuery()
                     .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
 
         public async Task UpdateAsync(Cart cart, CancellationToken cancellationToken = default)
         {
-            // Delete existing products attached to this cart directly in the DB
-            await _context.Set<CartProducts>()
+            var existingItems = await _context.Set<CartProducts>()
                 .Where(cp => cp.CartId == cart.Id)
-                .ExecuteDeleteAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            // Re-attach and update the cart, which will also insert the new items in cart.Products
+            _context.Set<CartProducts>().RemoveRange(existingItems);
+            
             _context.Carts.Update(cart);
             await _context.SaveChangesAsync(cancellationToken);
         }

@@ -14,6 +14,8 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.ListCart
 
         public DateTime CreatedAt { get; set; }
 
+        public UserResult User { get; set; }
+        
         public Guid UserId { get; set; }
 
         public CartStatus Status { get; set; }
@@ -34,6 +36,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.ListCart
         public decimal? Discount { get; set; }
 
         public string ProductName { get; set; } = string.Empty;
+
         public decimal TotalPrice { get; set; }
     }
 }

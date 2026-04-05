@@ -7,8 +7,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart
     {
         public CreateCartRequestValidator()
         {
-            RuleFor(Cart => Cart.UserId).NotEmpty();
-
+            RuleFor(Cart => Cart.Branch).NotEmpty().NotNull();
             RuleFor(Cart => Cart.Products)
                 .NotEmpty()
                 .WithMessage("A lista de produtos não pode ser vazia.")

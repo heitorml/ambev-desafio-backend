@@ -4,6 +4,8 @@ using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using MassTransit;
+using Ambev.DeveloperEvaluation.Domain.Events.Sales;
+using Ambev.DeveloperEvaluation.Domain.Events.Products;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 
@@ -32,6 +34,23 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Create
 
         var createdProduct = await _productRepository.CreateAsync(product, cancellationToken);
         var result = _mapper.Map<CreateProductResult>(createdProduct);
+        result.Quantity = command.Quantity;
+        result.TotalPrice = command.UnitPrice * command.Quantity;
+
+        await SendEvent(createdProduct, cancellationToken);
+
         return result;
+    }
+
+    private async Task SendEvent(Product product, CancellationToken cancellationToken)
+    {
+        await _bus.Publish(new ProductCreatedEvent
+        {
+            CreatedAt = product.CreatedAt,
+            ProductId = product.Id,
+            ProductName = product.ProductName,
+            UnitPrice = product.UnitPrice
+        },
+        cancellationToken);
     }
 }

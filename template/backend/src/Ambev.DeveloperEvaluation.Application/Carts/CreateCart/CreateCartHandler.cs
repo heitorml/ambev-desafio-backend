@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Events.Sales;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Services;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
@@ -37,6 +38,19 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
+            if (command.Products != null && command.Products.Any())
+            {
+                command.Products = command.Products
+                    .GroupBy(p => p.Id)
+                    .Select(g => new CreateCartItemCommand
+                    {
+                        Id = g.Key,
+                        Quantity = g.Sum(x => x.Quantity),
+                        UnitPrice = g.First().UnitPrice,
+                        ProductName = g.First().ProductName
+                    }).ToList();
+            }
+
             var productIds = command.Products.Select(p => p.Id).ToList();
             var products = await _productRepository.GetByIdsAsync(productIds, cancellationToken);
 
@@ -52,8 +66,25 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart
 
             var createdcart = await _cartRepository.CreateAsync(cart, cancellationToken);
             var result = _mapper.Map<CreateCartResult>(createdcart);
+
+            await SendEvent(cart, cancellationToken);
+
             return result;
         }
 
+        private async Task SendEvent(Cart cart, CancellationToken cancellationToken)
+        {
+            await _bus.Publish(new SaleCreatedEvent
+            {
+
+                UserId = cart.UserId,
+                TotalCartAmount = cart.TotalCartAmount,
+                Quantity = cart.Quantity,
+                Status = cart.Status,
+                CreatedAt = cart.CreatedAt,
+                CartId = cart.Id
+            },
+            cancellationToken);
+        }
     }
 }

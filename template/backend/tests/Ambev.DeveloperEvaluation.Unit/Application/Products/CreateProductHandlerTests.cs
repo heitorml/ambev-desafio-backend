@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentAssertions;
+using MassTransit;
 using NSubstitute;
 using Xunit;
 
@@ -12,13 +13,15 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Products
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
         private readonly CreateProductHandler _handler;
 
         public CreateProductHandlerTests()
         {
             _productRepository = Substitute.For<IProductRepository>();
             _mapper = Substitute.For<IMapper>();
-            _handler = new CreateProductHandler(_productRepository, _mapper);
+            _bus = Substitute.For<IBus>();
+            _handler = new CreateProductHandler(_productRepository, _mapper, _bus);
         }
 
         [Fact(DisplayName = "Given valid product data When creating product Then returns success response")]

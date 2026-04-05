@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.ListCarts
 {
@@ -14,7 +15,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.ListCarts
         public long Quantity { get; set; }
 
         public DateTime CreatedAt { get; set; }
-
+        public UserResponse User { get; set; }
         public Guid UserId { get; set; }
 
         public CartStatus Status { get; set; }

@@ -2,6 +2,8 @@ using MediatR;
 using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MassTransit;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Events.Products;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 
@@ -28,6 +30,17 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, Delete
         if (!success)
             throw new KeyNotFoundException($"Product with id {command.Id} not found");
 
+        await SendEvent(command.Id, cancellationToken);
+
         return new DeleteProductResult { Success = true };
+    }
+
+    private async Task SendEvent(Guid productId, CancellationToken cancellationToken)
+    {
+        await _bus.Publish(new ProductCreatedEvent
+        {
+            ProductId = productId,
+        },
+        cancellationToken);
     }
 }

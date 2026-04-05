@@ -9,6 +9,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.ListCart
         {
             CreateMap<Cart, ListCartResult>();
             CreateMap<CartProducts, CartProductResult>();
+            CreateMap<User, UserResult>();
         }
     }
 }

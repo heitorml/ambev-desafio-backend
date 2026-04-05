@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Application.Carts.ListCart;
+using Ambev.DeveloperEvaluation.Application.Carts.ListCart;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using AutoMapper;
 
@@ -10,6 +10,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.GetCart
         {
             CreateMap<Cart, GetCartResult>();
             CreateMap<CartProducts, CartProductResult>();
+            CreateMap<User, UserResult>();
         }
     }
 }

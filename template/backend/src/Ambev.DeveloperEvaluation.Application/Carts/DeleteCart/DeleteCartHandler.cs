@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Domain.Events.Sales;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using MassTransit;
 using MediatR;
@@ -28,7 +29,18 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.DeleteCart
             if (!success)
                 throw new KeyNotFoundException($"cart with ID {request.Id} not found");
 
+            await SendEvent(request, cancellationToken);
+
             return new DeleteCartResult { Success = true };
+        }
+
+        private async Task SendEvent(DeleteCartCommand request, CancellationToken cancellationToken)
+        {
+            await _bus.Publish(new SaleCancelledEvent
+            {
+                CartId = request.Id
+            },
+            cancellationToken);
         }
     }
 }

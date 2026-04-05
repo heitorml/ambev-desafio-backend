@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -25,6 +25,8 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.GetCart
                 throw new ValidationException(validationResult.Errors);
 
             var cart = await _cartsRepository.GetByIdAsync(request.Id, cancellationToken);
+            if (cart == null)
+                throw new KeyNotFoundException($"Cart with ID {request.Id} not found");
 
             return _mapper.Map<GetCartResult>(cart);
         }
