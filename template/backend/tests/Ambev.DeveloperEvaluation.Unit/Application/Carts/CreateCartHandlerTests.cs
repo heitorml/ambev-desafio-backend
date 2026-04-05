@@ -61,7 +61,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Carts
         public async Task Handle_InvalidRequest_ThrowsValidationException()
         {
             // Given
-            var command = new CreateCartCommand(); // Empty command fails validation
+            var command = new CreateCartCommand();
 
             // When
             var act = () => _handler.Handle(command, CancellationToken.None);

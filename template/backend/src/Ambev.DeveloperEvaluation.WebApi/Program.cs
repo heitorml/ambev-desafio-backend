@@ -9,9 +9,8 @@ using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Serilog;
-using Microsoft.Extensions.DependencyInjection;
 using Polly;
+using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -29,38 +28,15 @@ public class Program
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
-            builder.AddBasicHealthChecks();
-            builder.Services.AddSwaggerGen(c =>
+            builder.Services.AddStackExchangeRedisCache(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ambev Developer Evaluation API", Version = "v1" });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.\n\nExample: \"Bearer 12345abcdef\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-                        },
-                        new List<string>()
-                    }
-                });
+                options.Configuration = builder.Configuration.GetValue<string>("Redis:Configuration") 
+                    ?? builder.Configuration.GetValue<string>("Redis__Configuration")
+                    ?? "127.0.0.1:6379,password=ev@luAt10n";
             });
+
+            builder.AddBasicHealthChecks();
+            AddSwagger(builder);
 
             builder.Services.AddDbContext<DefaultContext>(options =>
                 options.UseNpgsql(
@@ -102,26 +78,8 @@ public class Program
             app.UseBasicHealthChecks();
 
             app.MapControllers();
-            
-     
-            var retryPolicy = Policy
-                .Handle<Exception>()
-                .WaitAndRetry(
-                    5,
-                    retryAttempt => TimeSpan.FromSeconds(5),
-                    (exception, timeSpan, retryCount, context) =>
-                    {
-                        Log.Warning("Attempt {Attempt} to apply migrations failed. Retrying in {Seconds} seconds... Error: {Message}", retryCount, timeSpan.Seconds, exception.Message);
-                    });
 
-            retryPolicy.Execute(() =>
-            {
-                using (var scope = app.Services.CreateScope())
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<DefaultContext>();
-                    dbContext.Database.Migrate();
-                }
-            });
+            ResiliencePolicy(app);
 
             app.Run();
         }
@@ -133,5 +91,62 @@ public class Program
         {
             Log.CloseAndFlush();
         }
+    }
+
+    private static void ResiliencePolicy(WebApplication app)
+    {
+        var retryPolicy = Policy
+            .Handle<Exception>()
+            .WaitAndRetry(
+                5,
+                retryAttempt => TimeSpan.FromSeconds(5),
+                (exception, timeSpan, retryCount, context) =>
+                {
+                    Log.Warning("Attempt {Attempt} to apply migrations failed. Retrying in {Seconds} seconds... Error: {Message}", retryCount, timeSpan.Seconds, exception.Message);
+                });
+
+        retryPolicy.Execute(() =>
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<DefaultContext>();
+                dbContext.Database.Migrate();
+            }
+        });
+    }
+
+    private static void AddSwagger(WebApplicationBuilder builder)
+    {
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ambev Developer Evaluation API", Version = "v1" });
+
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.\n\nExample: \"Bearer 12345abcdef\"",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
+        });
     }
 }

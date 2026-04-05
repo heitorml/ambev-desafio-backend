@@ -1,16 +1,21 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories
 {
     public class ProductRepository : IProductRepository
     {
         private readonly DefaultContext _context;
+        private readonly IDistributedCache _cache;
+        private const string CachePrefix = "Product:";
 
-        public ProductRepository(DefaultContext context)
+        public ProductRepository(DefaultContext context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         public async Task<Product> CreateAsync(Product product, CancellationToken cancellationToken = default)
@@ -28,6 +33,10 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Invalidate cache
+            await _cache.RemoveAsync($"{CachePrefix}{id}", cancellationToken);
+
             return true;
         }
 
@@ -35,6 +44,9 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         {
             _context.Products.Update(product);
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Invalidate cache
+            await _cache.RemoveAsync($"{CachePrefix}{product.Id}", cancellationToken);
         }
 
         public IQueryable<Product?> GetAllAsync(CancellationToken cancellationToken = default)
@@ -45,8 +57,27 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 
         public async Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _context.Products
+            var cacheKey = $"{CachePrefix}{id}";
+            var cachedProduct = await _cache.GetStringAsync(cacheKey, cancellationToken);
+
+            if (!string.IsNullOrEmpty(cachedProduct))
+            {
+                return JsonSerializer.Deserialize<Product>(cachedProduct);
+            }
+
+            var product = await _context.Products
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (product != null)
+            {
+                await _cache.SetStringAsync(
+                    cacheKey, 
+                    JsonSerializer.Serialize(product), 
+                    new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(10) },
+                    cancellationToken);
+            }
+
+            return product;
         }
 
         public async Task<List<Product>> GetByIdsAsync(List<Guid> ids, CancellationToken cancellationToken = default)

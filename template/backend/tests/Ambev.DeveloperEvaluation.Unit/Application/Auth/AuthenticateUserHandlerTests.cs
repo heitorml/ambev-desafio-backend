@@ -29,8 +29,20 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Auth
         public async Task Handle_ValidCredentials_ReturnsToken()
         {
             // Given
-            var command = new AuthenticateUserCommand { Email = "test@test.com", Password = "password" };
-            var user = new User { Email = command.Email, Password = "hashedPassword", Username = "test", Role = UserRole.Customer, Status = UserStatus.Active };
+            var command = new AuthenticateUserCommand 
+            { 
+                Email = "test@test.com", 
+                Password = "password"
+            };
+
+            var user = new User 
+            {
+                Email = command.Email, 
+                Password = "hashedPassword", 
+                Username = "test", 
+                Role = UserRole.Customer,
+                Status = UserStatus.Active 
+            };
             var token = "generated-jwt-token";
 
             _userRepository.GetByEmailAsync(command.Email, Arg.Any<CancellationToken>()).Returns(user);

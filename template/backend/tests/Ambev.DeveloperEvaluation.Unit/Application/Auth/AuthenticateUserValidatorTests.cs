@@ -17,7 +17,11 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Auth
         public void Validate_ValidCommand_ShouldNotHaveErrors()
         {
             // Given
-            var command = new AuthenticateUserCommand { Email = "test@test.com", Password = "password123" };
+            var command = new AuthenticateUserCommand 
+            {
+                Email = "test@test.com", 
+                Password = "password123" 
+            };
 
             // When
             var result = _validator.TestValidate(command);
@@ -32,7 +36,11 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Auth
         public void Validate_InvalidEmail_ShouldHaveError(string email)
         {
             // Given
-            var command = new AuthenticateUserCommand { Email = email, Password = "password123" };
+            var command = new AuthenticateUserCommand 
+            { 
+                Email = email,
+                Password = "password123" 
+            };
 
             // When
             var result = _validator.TestValidate(command);

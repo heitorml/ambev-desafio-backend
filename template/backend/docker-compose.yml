@@ -12,6 +12,7 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=Host=ambev.developerevaluation.database;Database=developer_evaluation;Username=developer;Password=ev@luAt10n
       - RabbitMq__Url=ambev.developerevaluation.rabbitmq
+      - Redis__Configuration=ambev.developerevaluation.cache:6379,password=ev@luAt10n
     restart: unless-stopped
     depends_on:
       ambev.developerevaluation.database:
@@ -66,10 +67,14 @@ services:
     image: redis:7.4.1-alpine     
     command: redis-server --requirepass ev@luAt10n
     environment:
-       MONGO_INITDB_ROOT_USERNAME: developer
-       MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
+      - REDIS_PASSWORD=ev@luAt10n
     ports:
-       - "6379"
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   ambev.developerevaluation.rabbitmq:
     container_name: ambev_developer_evaluation_rabbitmq

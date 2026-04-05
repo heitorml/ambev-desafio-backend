@@ -5,6 +5,7 @@ using Ambev.DeveloperEvaluation.ORM.Repositories;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using NSubstitute;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Carts
                 .Options;
 
             _context = new DefaultContext(options);
-            _repository = new CartRepository(_context);
+            _repository = new CartRepository(_context, Substitute.For<IDistributedCache>());
             _mapper = Substitute.For<IMapper>();
             _handler = new ListCartHandler(_repository, _mapper);
         }
@@ -34,7 +35,12 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Carts
         {
             // Given
             var command = new ListCartCommand { PageNumber = 1, PageSize = 10 };
-            var cart = new Cart { Id = Guid.NewGuid(), UserId = Guid.NewGuid(), Branch = "Test" };
+            var cart = new Cart 
+            { 
+                Id = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
+                Branch = "Test" 
+            };
             _context.Carts.Add(cart);
             _context.SaveChanges();
 

@@ -30,8 +30,16 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Products
         {
             // Given
             var command = ProductHandlerTestData.GenerateValidUpdateCommand();
-            var product = new Product { Id = command.Id, ProductName = command.ProductName, UnitPrice = command.UnitPrice };
-            var result = new UpdateProductResult { Id = product.Id };
+            var product = new Product 
+            { 
+                Id = command.Id, 
+                ProductName = command.ProductName, 
+                UnitPrice = command.UnitPrice 
+            };
+            var result = new UpdateProductResult
+            { 
+                Id = product.Id 
+            };
 
             _productRepository.GetByIdAsync(command.Id, Arg.Any<CancellationToken>()).Returns(product);
             _mapper.Map<UpdateProductResult>(product).Returns(result);

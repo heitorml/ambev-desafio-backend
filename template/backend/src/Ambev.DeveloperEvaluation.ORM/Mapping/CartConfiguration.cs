@@ -29,7 +29,8 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
 
             builder.HasMany(c => c.Products)
                 .WithOne(cp => cp.Cart);
-           CartSeed.Seed(builder);
+
+             CartSeed.Seed(builder);
         }
     }
 }

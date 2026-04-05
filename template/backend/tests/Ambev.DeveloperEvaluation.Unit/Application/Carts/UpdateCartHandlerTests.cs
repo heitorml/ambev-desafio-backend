@@ -39,13 +39,20 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Carts
                 Branch = command.Branch
             };
 
-            var result = new UpdateCartResult { Id = cart.Id, Success = true };
+            var result = new UpdateCartResult 
+            { 
+                Id = cart.Id, 
+                Success = true 
+            };
 
             _cartRepository.GetByIdAsync(command.Id, Arg.Any<CancellationToken>()).Returns(cart);
             _mapper.Map<UpdateCartResult>(cart).Returns(result);
 
             // Mock the void Map call
-            _mapper.When(x => x.Map(Arg.Any<object>(), Arg.Any<object>(), Arg.Any<Action<IMappingOperationOptions<object, object>>>()))
+            _mapper.When(x => x.Map(
+                Arg.Any<object>(), 
+                Arg.Any<object>(), 
+                Arg.Any<Action<IMappingOperationOptions<object, object>>>()))
                    .Do(_ => { });
 
             // When

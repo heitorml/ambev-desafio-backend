@@ -3,6 +3,8 @@ using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using NSubstitute;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
@@ -11,6 +13,7 @@ namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
     {
         private readonly DefaultContext _context;
         private readonly ProductRepository _repository;
+        private readonly IDistributedCache _cache;
 
         public ProductRepositoryTests()
         {
@@ -19,7 +22,8 @@ namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
                 .Options;
 
             _context = new DefaultContext(options);
-            _repository = new ProductRepository(_context);
+            _cache = Substitute.For<IDistributedCache>();
+            _repository = new ProductRepository(_context, _cache);
         }
 
         [Fact(DisplayName = "Given new product When creating Then should save to database")]
@@ -84,26 +88,41 @@ namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
             result.Should().BeTrue();
             var dbProduct = await _context.Products.FindAsync(product.Id);
             dbProduct.Should().BeNull();
+
+            // Verify cache removed
+            await _cache.Received(1).RemoveAsync(Arg.Is<string>(k => k.Contains(product.Id.ToString())), Arg.Any<CancellationToken>());
         }
 
         [Fact(DisplayName = "Given multiple products When getting by IDs Then returns list of products")]
         public async Task GetByIdsAsync_MultipleProducts_ReturnsProducts()
         {
             // Given
-            var p1 = new Product { Id = Guid.NewGuid(), ProductName = "P1", UnitPrice = 1 };
-            var p2 = new Product { Id = Guid.NewGuid(), ProductName = "P2", UnitPrice = 2 };
-            await _context.Products.AddRangeAsync(p1, p2);
+            var product1 = new Product 
+            { 
+                Id = Guid.NewGuid(),
+                ProductName = "P1",
+                UnitPrice = 1 
+            };
+            
+            var product2 = new Product 
+            { 
+                Id = Guid.NewGuid(), 
+                ProductName = "P2", 
+                UnitPrice = 2 
+            };
+
+            await _context.Products.AddRangeAsync(product1, product2);
             await _context.SaveChangesAsync();
 
-            var ids = new List<Guid> { p1.Id, p2.Id };
+            var ids = new List<Guid> { product1.Id, product2.Id };
 
             // When
             var products = await _repository.GetByIdsAsync(ids, CancellationToken.None);
 
             // Then
             products.Should().HaveCount(2);
-            products.Should().Contain(p => p.Id == p1.Id);
-            products.Should().Contain(p => p.Id == p2.Id);
+            products.Should().Contain(p => p.Id == product1.Id);
+            products.Should().Contain(p => p.Id == product2.Id);
         }
     }
 }

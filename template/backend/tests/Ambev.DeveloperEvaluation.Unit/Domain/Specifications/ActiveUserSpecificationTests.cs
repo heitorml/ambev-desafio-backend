@@ -1,28 +1,51 @@
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
-using Ambev.DeveloperEvaluation.Unit.Application.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Domain.Specifications
+namespace Ambev.DeveloperEvaluation.Unit.Domain.Specifications;
+
+public class ActiveUserSpecificationTests
 {
-    public class ActiveUserSpecificationTests
+    private readonly ActiveUserSpecification _specification;
+
+    public ActiveUserSpecificationTests()
     {
-        [Theory]
-        [InlineData(UserStatus.Active, true)]
-        [InlineData(UserStatus.Inactive, false)]
-        [InlineData(UserStatus.Suspended, false)]
-        public void IsSatisfiedBy_ShouldValidateUserStatus(UserStatus status, bool expectedResult)
+        _specification = new ActiveUserSpecification();
+    }
+
+    [Fact(DisplayName = "IsSatisfiedBy should return true when user is active")]
+    public void IsSatisfiedBy_ActiveUser_ReturnsTrue()
+    {
+        // Given
+        var user = new User
         {
-            // Arrange
-            var user = ActiveUserSpecificationTestData.GenerateUser(status);
-            var specification = new ActiveUserSpecification();
+            Status = UserStatus.Active
+        };
 
-            // Act
-            var result = specification.IsSatisfiedBy(user);
+        // When
+        var result = _specification.IsSatisfiedBy(user);
 
-            // Assert
-            result.Should().Be(expectedResult);
-        }
+        // Then
+        result.Should().BeTrue();
+    }
+
+    [Theory(DisplayName = "IsSatisfiedBy should return false when user is not active")]
+    [InlineData(UserStatus.Inactive)]
+    [InlineData(UserStatus.Suspended)]
+    public void IsSatisfiedBy_InactiveOrSuspendedUser_ReturnsFalse(UserStatus status)
+    {
+        // Given
+        var user = new User
+        {
+            Status = status
+        };
+
+        // When
+        var result = _specification.IsSatisfiedBy(user);
+
+        // Then
+        result.Should().BeFalse();
     }
 }

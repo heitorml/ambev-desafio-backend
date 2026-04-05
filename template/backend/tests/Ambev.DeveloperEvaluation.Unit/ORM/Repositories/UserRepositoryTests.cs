@@ -4,6 +4,8 @@ using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using NSubstitute;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
@@ -12,6 +14,7 @@ namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
     {
         private readonly DefaultContext _context;
         private readonly UserRepository _repository;
+        private readonly IDistributedCache _cache;
 
         public UserRepositoryTests()
         {
@@ -20,7 +23,8 @@ namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
                 .Options;
 
             _context = new DefaultContext(options);
-            _repository = new UserRepository(_context);
+            _cache = Substitute.For<IDistributedCache>();
+            _repository = new UserRepository(_context, _cache);
         }
 
         [Fact(DisplayName = "Given new user When creating Then should save to database")]
@@ -118,6 +122,9 @@ namespace Ambev.DeveloperEvaluation.Unit.ORM.Repositories
             result.Should().BeTrue();
             var dbUser = await _context.Users.FindAsync(user.Id);
             dbUser.Should().BeNull();
+
+            // Verify cache removed
+            await _cache.Received(1).RemoveAsync(Arg.Is<string>(k => k.Contains(user.Id.ToString())), Arg.Any<CancellationToken>());
         }
     }
 }
